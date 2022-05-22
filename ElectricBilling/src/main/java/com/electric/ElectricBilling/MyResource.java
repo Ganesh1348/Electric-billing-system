@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -15,6 +16,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.electric.ElectricBilling.Commands.BillingCommands;
+import com.electric.ElectricBilling.Models.pinCodeAnalysis;
 import com.electric.ElectricBilling.Models.userCreate;
 import com.electric.ElectricBilling.Models.userDetailsModel;
 import com.electric.ElectricBilling.Services.BillingServices;
@@ -75,8 +78,37 @@ public class MyResource {
 		catch(Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println(userDetails);
 		return userDetails;
 
+	}
+	
+	@POST
+	@Path("/bill/process")
+	@Produces("application/json")
+	public String getBillingCustomer(BillingCommands cmd) {
+		String billingStatus = null;
+		try {
+			billingStatus=BillingServices.getUserBillingServices(cmd);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return billingStatus;
+	}
+	
+	
+	@GET
+	@Path("/analyse/pinCode/{pincode}")
+	@Produces("application/json")
+	public List<pinCodeAnalysis> getPinCodeAnalysis(@PathParam("pincode") Integer pinCode){
+		List<pinCodeAnalysis> analysis = null;
+		try {
+			analysis=BillingServices.getUserAnalysisServices(pinCode);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		return analysis;
 	}
 
 }

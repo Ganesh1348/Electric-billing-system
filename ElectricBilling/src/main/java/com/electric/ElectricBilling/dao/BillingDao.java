@@ -6,11 +6,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
+import com.electric.ElectricBilling.Models.pinCodeAnalysis;
 import com.electric.ElectricBilling.Models.userCreate;
 import com.electric.ElectricBilling.Models.userDetailsModel;
+
+import ExecuteQueries.SQLQueries;
 
 public class BillingDao {
 
@@ -93,6 +98,80 @@ public class BillingDao {
 		}
 		
 		return list;
+	}
+
+	public static String getUserBillingDao(int custId, int EBbill, String occuption) {
+	
+		int status=0;
+		try {
+			Connection con = BillingDao.DB();
+		PreparedStatement ps = con
+				.prepareStatement("INSERT INTO EB1B(customerid,bill,occuption) values(?,?,?)");
+		ps.setLong(1,custId);
+		ps.setInt(2, EBbill);
+		ps.setString(3, occuption);
+
+		status = ps.executeUpdate();
+		
+		con.commit();
+		con.close();
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+
+	if (status > 0) {
+		return "sucessfully inserted";
+	}
+
+	return "try again";
+}
+
+	public static List<pinCodeAnalysis> exceuteAnalyseDao(Integer pinCode, String town) throws Exception {
+		List<userDetailsModel> list=new LinkedList<userDetailsModel>();
+		List<pinCodeAnalysis> map=new ArrayList<pinCodeAnalysis>();
+		try {
+			Connection conn=BillingDao.DB();
+			PreparedStatement ps=conn.prepareStatement(SQLQueries.USER_DETAILS);
+			ResultSet rs=ps.executeQuery();
+			
+			while(rs.next()) {
+				userDetailsModel model=new userDetailsModel();
+				model.setCustomerName(rs.getString(1));
+				model.setCustomerId(rs.getInt(2));
+				model.setPinCode(rs.getInt(5));
+				list.add(model);				
+			}
+			conn.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		map=BillingDao.executeAnalyseDao(list,pinCode);
+		return map;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<pinCodeAnalysis> executeAnalyseDao(List<userDetailsModel> model,Integer pinCode) throws Exception{
+		List<pinCodeAnalysis> result=new ArrayList<pinCodeAnalysis>();
+		
+		 ListIterator<userDetailsModel> list= model.listIterator();
+		 
+		 while(list.hasNext()) {
+			System.out.println(list.next());
+		 }
+		 
+		 for(userDetailsModel user:model) 
+		 {
+			 pinCodeAnalysis pin=new pinCodeAnalysis();
+			 if(user.getPinCode().equals(pinCode)) {
+				 pin.setCustomerId(user.getCustomerId());
+				 pin.setCustomerName(user.getCustomerName());
+				 pin.setPinCode(user.getPinCode());
+				 result.add(pin);				 
+			 }
+		 }
+		
+		return result;
 	}
 
 }

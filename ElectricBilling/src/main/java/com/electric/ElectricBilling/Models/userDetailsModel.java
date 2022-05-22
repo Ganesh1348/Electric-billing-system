@@ -2,12 +2,29 @@ package com.electric.ElectricBilling.Models;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.electric.ElectricBilling.SerializedName;
+
 @XmlRootElement
 public class userDetailsModel {
+	
+//	@SerializedName("custName")
+//	@Expose
 	private String customerName;
+//	
+//	@SerializedName("ID")
+//	@Expose
 	private Integer customerId;
+	
+//	@SerializedName("ADD")
+//	@Expose
 	private String address;
+//	
+//	@SerializedName("TOWN")
+//	@Expose
 	private String city;
+//	
+//	@SerializedName("PINCODE")
+//	@Expose
 	private Integer pinCode;
 
 	public String getCustomerName() {
@@ -48,6 +65,11 @@ public class userDetailsModel {
 
 	public void setPinCode(Integer pinCode) {
 		this.pinCode = pinCode;
+	}
+	
+	@Override
+	public String toString() {
+		return getCustomerName() + ' ' +getCustomerId();
 	}
 
 }
